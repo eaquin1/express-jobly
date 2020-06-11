@@ -21,8 +21,9 @@ router.get("/", async function(req, res, next){
 router.get("/:id", async function(req, res, next){
     try{
         const {id} = req.params
-        const job = await Job.getById(id)
-        return res.json({job})
+        const result = await Job.getById(id)
+        
+        return res.json({result})
     }
     catch(e){
         return next(e)
@@ -35,11 +36,9 @@ router.post("/", async function(req, res, next){
     try{
         const validation = validate(req.body, newJobSchema)
         if (!validation.valid) {
-            return next({
-                status: 400,
-                error: validation.errors.map(e => e.stack)
-            })
-        }
+            throw new ExpressError(validation.errors.map(e => e.stack), 400) 
+            }
+        
         const results = await Job.createJob(req.body)
         return res.status(201).json({job: results })
     }

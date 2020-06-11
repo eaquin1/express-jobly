@@ -19,7 +19,7 @@ class Job {
             whereExpressions.push(`salary >=$${queryValues.length}`);
         }
 
-        if (data.max_equityy) {
+        if (data.max_equity) {
             queryValues.push(+data.max_salary);
             whereExpressions.push(`equity <=$${queryValues.length}`);
         }
@@ -34,29 +34,32 @@ class Job {
         }
         let finalQuery =
             baseQuery + whereExpressions.join(" AND ") + " ORDER BY date_posted";
+         
         const jobsRes = await db.query(finalQuery, queryValues);
         return jobsRes.rows;
     }
 
     /** get job by id: returns job */
-    static async getByid(id) {
-        const job = await db.query(
+    static async getById(id) {
+        const jobResponse = await db.query(
             `SELECT id, title, salary, equity, company_handle, date_posted FROM jobs WHERE id=$1`,
             [id]
         );
+        
+        const job = jobResponse.rows[0]
 
-        if (job.rows.length === 0) {
+        if (!job) {
             throw new ExpressError(`No such job: ${id}`);
         }
 
-        const companiesRes = await db.query(
+        const companiesResponse = await db.query(
             `SELECT name, num_employees, description, logo_url 
               FROM companies 
               WHERE handle = $1`,
             [job.company_handle]
           );
       
-          job.company = companiesRes.rows[0];
+          job.company = companiesResponse.rows[0];
       
           return job;
     
