@@ -37,11 +37,10 @@ router.post("/", async function(req, res, next){
         if (!validation.valid) {
            throw new ExpressError(validation.errors.map(e => e.stack), 400)
             
-        
+        }
         const results = await Company.createCompany(req.body)
         return res.status(201).json({company: results })
         }
-    }
     catch(e){
         return next(e)
     }
