@@ -3,72 +3,46 @@ const request = require("supertest");
 const app = require("../../app");
 const db = require("../../db");
 
-const TEST_DATA = {}
-beforeEach(async function() {
-    let companyResult = await db.query(`
-    INSERT INTO companies(handle, name, num_employees) VALUES
-     ('apple', 'apple inc', 1500),
-     ('nike', 'nike inc', 200),
-     ('ibm', 'ibm inc', 9000),
-     ('starbucks', 'starbucks inc', 500);
-    `);
+const {
+    TEST_DATA,
+    afterEachHook,
+    beforeEachHook,
+    afterAllHook
+  } = require('./jest.config');
 
-    let jobResult = await db.query(
-        `INSERT INTO jobs (title, salary, equity, company_handle)
-        VALUES 
-        ('shoe expert', 50000.0, 0.3, 'nike')`
-    )
-    TEST_DATA.job = jobResult.rows[0]
-    TEST_DATA.currentCompany = companyResult.rows[0]
-})
-
-
-afterEach(async function() {
-    //delete any data created by the test
-    try{
-    await db.query("DELETE FROM jobs")
-    await db.query("DELETE FROM companies")
-    } catch(e){
-        console.log(e)
-    }
-})
-
-afterAll(async function () {
-    //close db
-
-    await db.end()
+beforeEachHook(async () => {
+    await beforeEachHook(TEST_DATA)
 })
 
 describe("GET all jobs", function () {
     it("Gets a list of jobs", async function () {
-        console.log("TEST DATA", TEST_DATA)
         const resp = await request(app).get("/jobs");
         expect(resp.statusCode).toEqual(200);
-        expect(resp.body).toEqual({TEST_DATA
-            // jobs: [
-                
-            //     {title: "shoe expert", id: TEST_DATA.job.id, company_handle: "nike" }
-            
-            // ]
-        });
-    });
-
-    it("uses search parameters", async function () {
-        const resp = await request(app).get("/jobs?search=shoe");
-        expect(resp.statusCode).toEqual(200);
-        expect(resp.body).toEqual({
-            jobs: [{title: "shoe expert", id: TEST_DATA.jobId, company_handle: "nike" }],
-        });
-    });
-
-    it("uses min salary search parameter", async function () {
-        const resp = await request(app).get("/jobs?min_salary=49000");
         expect(resp.body).toEqual({
             jobs: [
-                {title: "shoe expert", id: TEST_DATA.jobId, company_handle: "nike" }
-            ],
+                
+                {title: "Software Engineer", id: TEST_DATA.jobId, company_handle: "rithm" }
+            
+            ]
         });
     });
+
+    // it("uses search parameters", async function () {
+    //     const resp = await request(app).get("/jobs?search=shoe");
+    //     expect(resp.statusCode).toEqual(200);
+    //     expect(resp.body).toEqual({
+    //         jobs: [{title: "shoe expert", id: TEST_DATA.jobId, company_handle: "nike" }],
+    //     });
+    // });
+
+    // it("uses min salary search parameter", async function () {
+    //     const resp = await request(app).get("/jobs?min_salary=49000");
+    //     expect(resp.body).toEqual({
+    //         jobs: [
+    //             {title: "shoe expert", id: TEST_DATA.jobId, company_handle: "nike" }
+    //         ],
+    //     });
+    // });
 });
 
 // describe("POST new jobs", function () {
@@ -123,3 +97,12 @@ describe("GET all jobs", function () {
 //         expect(resp.statusCode).toBe(200)
 //     })
 // })
+
+afterEach(async function () {
+    await afterEachHook();
+  });
+  
+  
+  afterAll(async function () {
+    await afterAllHook();
+  });
