@@ -56,7 +56,6 @@ class Company {
         }
 
         return result.rows[0];
-    
     }
     /** create a company: returns company */
     static async createCompany(data) {

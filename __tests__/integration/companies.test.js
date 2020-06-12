@@ -9,7 +9,6 @@ const {
     afterAllHook,
 } = require("./config");
 
-
 beforeEach(async () => {
     await beforeEachHook(TEST_DATA);
 });
@@ -111,7 +110,7 @@ describe("DELETE company", function () {
             .send({ _token: TEST_DATA.userToken });
         expect(resp.statusCode).toBe(200);
     });
-    
+
     it("Responds with a 404 if it cannot find the company in question", async function () {
         // delete company first
         const response = await request(app).delete(`/companies/notme`).send({
