@@ -5,9 +5,10 @@ const router = new express.Router()
 const {validate} = require("jsonschema")
 const newCompanySchema = require("../schemas/newCompanySchema.json");
 const updateCompanySchema = require("../schemas/updateCompanySchema.json");
+const {authRequired, adminRequired} = require("../middleware/auth")
 
 /** GET / => {companies: [companyData, ...]}  */
-router.get("/", async function(req, res, next){
+router.get("/", authRequired, async function(req, res, next){
     try{
         const companies = await Company.getAll(req.query)
         return res.json({companies})
@@ -18,7 +19,7 @@ router.get("/", async function(req, res, next){
 })
 
 /** GET /[handle]  => {company: companyData} */
-router.get("/:handle", async function(req, res, next){
+router.get("/:handle", authRequired, async function(req, res, next){
     try{
         const {handle} = req.params
         const companies = await Company.getByHandle(handle)
@@ -31,7 +32,7 @@ router.get("/:handle", async function(req, res, next){
 
 
 /** POST /  companyData => {company: newCompany}  */
-router.post("/", async function(req, res, next){
+router.post("/", adminRequired, async function(req, res, next){
     try{
         const validation = validate(req.body, newCompanySchema)
         if (!validation.valid) {
@@ -47,7 +48,7 @@ router.post("/", async function(req, res, next){
 })
 
 /** PATCH /[handle]   companyData => {company: companyData}  */
-router.patch("/:handle", async function(req, res, next){
+router.patch("/:handle", adminRequired, async function(req, res, next){
     try{
         const validation = validate(req.body, updateCompanySchema)
         if (!validation.valid) {
@@ -66,7 +67,7 @@ router.patch("/:handle", async function(req, res, next){
 
 
 /** DELETE /[handle]   => {message: "Company deleted"} */
-router.delete("/:handle", async function(req, res, next){
+router.delete("/:handle", adminRequired, async function(req, res, next){
     try{
        await Company.remove(req.params.handle)
         return res.json({message: "Company deleted"})

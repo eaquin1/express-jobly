@@ -4,18 +4,24 @@ const express = require("express");
 
 const ExpressError = require("./helpers/expressError");
 
-const morgan = require("morgan");
+//const morgan = require("morgan");
 
 const app = express();
-const companiesRoutes = require("./routes/companies")
-const jobRoutes = require("./routes/jobs")
 app.use(express.json());
 
+const companiesRoutes = require("./routes/companies")
+const jobsRoutes = require("./routes/jobs")
+const usersRoutes = require("./routes/users")
+const authRoutes = require("./routes/auth")
+
+
 // add logging system
-app.use(morgan("tiny"));
+//app.use(morgan("tiny"));
 
 app.use('/companies', companiesRoutes)
-app.use('/jobs', jobRoutes)
+app.use('/jobs', jobsRoutes)
+app.use('/users', usersRoutes)
+app.use('/', authRoutes)
 /** 404 handler */
 
 app.use(function(req, res, next) {

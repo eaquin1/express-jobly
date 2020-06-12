@@ -55,6 +55,15 @@
             "examples": [
                 "2020-03-19T07:22Z"
             ]
-        }
+        },
+        "_token": {
+            "$id": "/properties/token",
+            "type": "string",
+            "title": "The Token Schema ",
+            "default": "",
+            "examples": [
+              "foo123"
+            ]
+          }
     }
 }

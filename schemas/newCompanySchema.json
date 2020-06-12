@@ -69,6 +69,15 @@
             "examples": [
                 "https://apple.com"
             ]
-        }
+        },
+        "_token": {
+            "$id": "/properties/token",
+            "type": "string",
+            "title": "The Token Schema ",
+            "default": "",
+            "examples": [
+              "foo123"
+            ]
+          }
     }
 }
